@@ -19,6 +19,8 @@ class FSMClient(StatesGroup):
 # обычный старт который вызывается командой /start
 async def command_start(callback: types.CallbackQuery, state: FSMContext):
     try:
+        if await sqlite_db.sql_get_info(callback.from_user.id) is None:
+            await sqlite_db.sql_add_client(callback.from_user.id, callback.from_user.first_name)
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(callback.from_user.id,
@@ -251,6 +253,22 @@ async def command_change_info_dema_games(callback: types.CallbackQuery, state: F
         print('Не получилось отправить сообщение command_change_info_ufa_prices')
 
 
+# Клиенты
+
+
+# рассылка
+""" 
+async def writing_clients(password : str):
+    clients_for_mail = await sqlite_db.sql_get_all_users()
+    try: 
+        text_for_clients = "Хочешь получить 1 час бесплатно? Держи промокод: "+password+" подойдите к стойке, администрации, для активации. Код активируется, лишь, для первого показавшего."
+        for i in clients_for_mail:
+            await bot.send_message(i, text_for_clients)
+    except:
+        print(clients_for_mail)
+"""
+
+
 # контактная информация в Деме
 async def command_change_info_dema_contacts(callback: types.CallbackQuery, state: FSMContext):
     try:
@@ -268,25 +286,9 @@ async def command_change_info_dema_contacts(callback: types.CallbackQuery, state
         print('Не получилось отправить сообщение command_change_info_ufa_stocks')
 
 
-# начало о клиенте
-async def client_info_begin(callback: types.CallbackQuery, state: FSMContext):
-    await FSMClient.client_info.set()
-    text_return_sql = await sqlite_db.sql_get_info(callback.from_user.id)
-    if text_return_sql is None:
-        answer_kb = InlineKeyboardMarkup()
-        await FSMClient.client_register.set()
-        await client_kb.answer_yes_no(answer_kb, "client_info_begin")
-        await bot.send_message(callback.from_user.id, 'Вы не зарегестрированы в нашем боте, хотите это исправить?',
-                               reply_markup=client_kb.kb_inline)
-    else:
-        await bot.send_message(callback.from_user.id, "Колличество ваших баллов = " + str(text_return_sql))
-        await command_start(callback, state)
-        print(callback.from_user.id, " запросил свои данные")
-
-
 # регистрация клиента
 async def client_register(callback: types.CallbackQuery, state: FSMContext):
-    if await sqlite_db.sql_add_client(callback.from_user.id, callback.from_user.username, "") == 1:
+    if await sqlite_db.sql_add_client(callback.from_user.id, callback.from_user.username) == 1:
         await bot.send_message(callback.from_user.id, 'Регистрация завершена')
         await command_start_if_back(callback.message.chat, state)
     else:
@@ -312,11 +314,10 @@ async def cansel_handler(callback: types.CallbackQuery, state: FSMContext):
 def register_handlers_client(dp: Dispatcher):
     dp.register_callback_query_handler(cansel_handler, text='отмена', state="*")
     dp.register_callback_query_handler(cansel_handler, Text(equals='отмена', ignore_case=True), state="*")
+    dp.register_callback_query_handler(command_start, text='start', state=None)
     # раздел инфы о клиенте
     dp.register_callback_query_handler(cansel_handler, text='kb_registration_off', state=FSMClient.client_register)
-    dp.register_callback_query_handler(command_start, text='start', state=None)
     dp.register_callback_query_handler(client_register, text='kb_registration_on', state=FSMClient.client_register)
-    dp.register_callback_query_handler(client_info_begin, text='Мои_данные', state=FSMClient.begin)
     # раздел инфы о уфе
     dp.register_callback_query_handler(command_change_info_ufa, text='kb_info_ufa', state=FSMClient.begin)
     dp.register_callback_query_handler(command_change_info_ufa_pc, text='kb_info_ufa_pc', state=FSMClient.info_ufa)
@@ -343,4 +344,5 @@ def register_handlers_client(dp: Dispatcher):
                                        state=FSMClient.info_dema)
     dp.register_callback_query_handler(command_change_info_dema_contacts, text='kb_info_dema_contacts',
                                        state=FSMClient.info_dema)
+    # пустой ввод
     dp.register_message_handler(default_message_handler, commands=None, state=None)

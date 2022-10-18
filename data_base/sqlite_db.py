@@ -7,7 +7,7 @@ def sql_start():
     cur = base.cursor()
     if base:
         print('База данных подключена')
-    base.execute('CREATE TABLE IF NOT EXISTS clients(id INT PRIMARY KEY, name TEXT, number TEXT, points INT)')
+    base.execute('CREATE TABLE IF NOT EXISTS clients(id INT PRIMARY KEY, name TEXT)')
     base.commit()
 
 
@@ -18,13 +18,23 @@ async def sql_get_info(id: int):
     if len(records) == 0:
         return None
     else:
-        return records[0][3]
+        return 1
 
 
-async def sql_add_client(id: int, name: str, number: str):
+async def sql_get_all_users():
+    search_text = "SELECT * FROM clients"
+    cur.execute(search_text)
+    records = cur.fetchall()
+    if len(records) == 0:
+        return None
+    else:
+        return records
+
+
+async def sql_add_client(id: int, name: str):
     # "INSERT INTO clients (id, name, number, points) VALUES(" + str(id) + "," + name + "," + number + ",0)"
     try:
-        cur.execute("INSERT INTO clients (id, name, number, points) VALUES(?,?,?,0)", (id, name, number))
+        cur.execute("INSERT INTO clients (id, name) VALUES(?,?)", (id, name))
         base.commit()
         print(str(id) + " зарегистрировался")
         return 1
