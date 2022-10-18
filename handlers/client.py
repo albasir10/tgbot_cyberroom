@@ -270,10 +270,9 @@ async def command_change_info_dema_games(callback: types.CallbackQuery, state: F
 async def writing_clients(password: str):
     clients_for_mail = await sqlite_db.sql_get_all_users()
     try:
-        print("ss")
         text_for_clients = "Привет! Хочешь получить 1 час бесплатно? Держи промокод: " + password + "\nПодойдите к стойке администрации для активации. Код активируется, лишь, для первого показавшего."
         for i in clients_for_mail:
-            await bot.send_message(i, text_for_clients)
+            await bot.send_message(i[0], text_for_clients)
     except:
         print("error ", writing_clients)
 

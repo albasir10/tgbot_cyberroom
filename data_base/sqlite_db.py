@@ -28,7 +28,7 @@ async def sql_get_all_users():
     if len(records) == 0:
         return None
     else:
-        return records[0]
+        return records
 
 
 async def sql_add_client(id: int, name: str):
