@@ -28,11 +28,10 @@ async def sql_get_all_users():
     if len(records) == 0:
         return None
     else:
-        return records
+        return records[0]
 
 
 async def sql_add_client(id: int, name: str):
-    # "INSERT INTO clients (id, name, number, points) VALUES(" + str(id) + "," + name + "," + number + ",0)"
     try:
         cur.execute("INSERT INTO clients (id, name) VALUES(?,?)", (id, name))
         base.commit()

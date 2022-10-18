@@ -19,8 +19,11 @@ class FSMClient(StatesGroup):
 # обычный старт который вызывается командой /start
 async def command_start(callback: types.CallbackQuery, state: FSMContext):
     try:
-        if await sqlite_db.sql_get_info(callback.from_user.id) is None:
-            await sqlite_db.sql_add_client(callback.from_user.id, callback.from_user.first_name)
+        info_user = await sqlite_db.sql_get_info(callback.from_user.id)
+        id = callback.from_user.id
+        name = callback.from_user.first_name
+        if info_user is None:
+            await sqlite_db.sql_add_client(id, name)
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(callback.from_user.id,
@@ -35,6 +38,11 @@ async def command_start(callback: types.CallbackQuery, state: FSMContext):
 # старт после набора любого текста, не для меню
 async def command_start_after_message_client(message: types.Message, state: FSMContext):
     try:
+        info_user = await sqlite_db.sql_get_info(message.from_user.id)
+        id = message.from_user.id
+        name = message.from_user.first_name
+        if info_user is None:
+            await sqlite_db.sql_add_client(id, name)
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(message.from_user.id,
@@ -49,6 +57,7 @@ async def command_start_after_message_client(message: types.Message, state: FSMC
 # возвращение из любого окна в меню
 async def command_start_if_back(callbackmsgcht: types.chat, state: FSMContext):
     try:
+
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(callbackmsgcht.id,
@@ -257,16 +266,16 @@ async def command_change_info_dema_games(callback: types.CallbackQuery, state: F
 
 
 # рассылка
-""" 
-async def writing_clients(password : str):
+
+async def writing_clients(password: str):
     clients_for_mail = await sqlite_db.sql_get_all_users()
-    try: 
-        text_for_clients = "Хочешь получить 1 час бесплатно? Держи промокод: "+password+" подойдите к стойке, администрации, для активации. Код активируется, лишь, для первого показавшего."
+    try:
+        print("ss")
+        text_for_clients = "Привет! Хочешь получить 1 час бесплатно? Держи промокод: " + password + "\nПодойдите к стойке администрации для активации. Код активируется, лишь, для первого показавшего."
         for i in clients_for_mail:
             await bot.send_message(i, text_for_clients)
     except:
-        print(clients_for_mail)
-"""
+        print("error ", writing_clients)
 
 
 # контактная информация в Деме
@@ -288,7 +297,8 @@ async def command_change_info_dema_contacts(callback: types.CallbackQuery, state
 
 # регистрация клиента
 async def client_register(callback: types.CallbackQuery, state: FSMContext):
-    if await sqlite_db.sql_add_client(callback.from_user.id, callback.from_user.username) == 1:
+    check_create_user = await sqlite_db.sql_add_client(callback.from_user.id, callback.from_user.username)
+    if check_create_user == 1:
         await bot.send_message(callback.from_user.id, 'Регистрация завершена')
         await command_start_if_back(callback.message.chat, state)
     else:
