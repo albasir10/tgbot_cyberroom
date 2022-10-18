@@ -27,7 +27,7 @@ async def command_start(callback: types.CallbackQuery, state: FSMContext):
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(callback.from_user.id,
-                               'Привет! О каком клубе хочешь узнать? Выбирай вариант снизу.',
+                               'Привет! О каком клубе хочешь узнать? Выбирай вариант снизу. Если не работают кнопки, напишите что нибудь в чат, бот заговорит с вами вновь',
                                reply_markup=answer_kb)
         await FSMClient.begin.set()
     except:
@@ -46,7 +46,7 @@ async def command_start_after_message_client(message: types.Message, state: FSMC
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(message.from_user.id,
-                               'Привет! О каком клубе хочешь узнать? Выбирай вариант снизу.',
+                               'Привет! О каком клубе хочешь узнать? Выбирай вариант снизу. Если не работают кнопки, напишите что нибудь в чат, бот заговорит с вами вновь',
                                reply_markup=answer_kb)
         await FSMClient.begin.set()
     except:
@@ -61,7 +61,7 @@ async def command_start_if_back(callbackmsgcht: types.chat, state: FSMContext):
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_start(answer_kb)
         await bot.send_message(callbackmsgcht.id,
-                               'О каком клубе хочешь узнать? Выбирай вариант снизу.',
+                               'О каком клубе хочешь узнать? Выбирай вариант снизу. Если не работают кнопки, напишите что нибудь в чат, бот заговорит с вами вновь',
                                reply_markup=answer_kb)
         await FSMClient.begin.set()
     except:
