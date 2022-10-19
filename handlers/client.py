@@ -8,7 +8,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from data_base import sqlite_db
-from generateText import generate_qr_code
+from generate_text import generate_qr_code
 
 
 class FSMClient(StatesGroup):

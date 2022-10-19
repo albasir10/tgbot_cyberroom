@@ -1,0 +1,1 @@
+from generate_text import generate_qr_code

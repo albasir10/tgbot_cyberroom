@@ -72,7 +72,7 @@ async def update_time():
     time_save_file = open("time/lastTime.txt", "w")
     time_save_file.writelines([last_time + "\n", str(current_datetime.weekday())])
     time_save_file.close()
-    generate_code_file = open("generateText/code.txt", "w")
+    generate_code_file = open("generate_text/code.txt", "w")
     chars = 'abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
     length = random.randint(6, 8)
     password = ""
