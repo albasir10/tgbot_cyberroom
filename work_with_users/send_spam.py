@@ -34,18 +34,18 @@ def check_time_for_mailing_list():
         time_save_file.close()
     except:
         print('error open file check_time_for_mailing_list')
-    f = last_time_text.find('.')
-    year_last_time = last_time_text[0:last_time_text.find('.'):1]
-    year_current_time = current_time_text[0:current_time_text.find('.'):1]
+    point1 = last_time_text.find('.')
+    pointr1 = last_time_text.rfind('.')
+    point2 = current_time_text.find('.')
+    pointr2 = current_time_text.rfind('.')
+    year_last_time = last_time_text[0:point1:1]
+    year_current_time = current_time_text[0:point2:1]
     if int(year_current_time) == int(year_last_time):
-        month_last_time = last_time_text[
-                          last_time_text.find('.') + 1:last_time_text.find('.', last_time_text.find('.') + 1):1]
-        month_current_time = current_time_text[current_time_text.find('.') + 1:current_time_text.find('.',
-                                                                                                      current_time_text.find(
-                                                                                                          '.') + 1):1]
+        month_last_time = last_time_text[point1 + 1:last_time_text.find('.', point1 + 1):1]
+        month_current_time = current_time_text[point2 + 1:current_time_text.find('.', point2 + 1):1]
         if int(month_last_time) == int(month_current_time):
-            day_last_time = last_time_text[last_time_text.rfind('.') + 1:len(last_time_text):1]
-            day_current_time = current_time_text[current_time_text.rfind('.') + 1:len(current_time_text):1]
+            day_last_time = last_time_text[pointr1 + 1:len(last_time_text):1]
+            day_current_time = current_time_text[pointr2 + 1:len(current_time_text):1]
             if int(day_current_time) == int(day_last_time):
                 timer_for_wait.start()
             elif abs(int(day_current_time) - int(day_last_time) >= 7):
@@ -75,7 +75,7 @@ async def update_time():
     password = ""
     for i in range(length):
         password += random.choice(chars)
-    print("НОВЫЙ КОД: ", password)
+    print("НОВЫЙ ПРОМОКОД: ", password)
     generate_code_file.writelines(password)
     generate_code_file.close()
     await client.writing_clients(password)

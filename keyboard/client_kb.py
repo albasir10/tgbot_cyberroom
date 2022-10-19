@@ -1,22 +1,11 @@
 from aiogram.types import InlineKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 
-a1 = InlineKeyboardButton(text='1', callback_data='1')
-kb_inline = InlineKeyboardMarkup(row_width=2).add(a1)
-
 
 async def answer_start(kb_inline):
     a1 = InlineKeyboardButton(text='Информация ТЦБ', callback_data='kb_info_ufa')
     a2 = InlineKeyboardButton(text='Информация Дема', callback_data='kb_info_dema')
     kb_inline = InlineKeyboardMarkup(row_width=2).add(a1).add(a2)
     return kb_inline
-
-
-async def answer_yes_no(kb_inline, name_function: str):
-    if name_function == "client_info_begin":
-        a1 = InlineKeyboardButton(text='Да', callback_data='kb_registration_on')
-        a2 = InlineKeyboardButton(text='Нет', callback_data='kb_registration_off')
-        kb_inline = InlineKeyboardMarkup(row_width=2).add(a1).add(a2)
-        return kb_inline
 
 
 async def answer_change_info_ufa(kb_inline):
@@ -28,6 +17,7 @@ async def answer_change_info_ufa(kb_inline):
     a6 = InlineKeyboardButton(text='контактная информация', callback_data='kb_info_ufa_contacts')
     kb_inline = InlineKeyboardMarkup(row_width=2).add(a1).add(a2).add(a3).add(a4).add(a5).add(a6)
     return kb_inline
+
 
 async def answer_change_info_dema(kb_inline):
     a1 = InlineKeyboardButton(text='информация о пк', callback_data='kb_info_dema_pc')
