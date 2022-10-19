@@ -13,12 +13,15 @@ async def first_check_after_begin_work_bot():
         time_save_file = open("time/lastTime.txt", "x")
         time_save_file.writelines([last_time + "\n", str(current_datetime.weekday())])
         time_save_file.close()
-        # await update_time()
+        await update_time()
+        thread1 = Thread(target=check_time_for_mailing_list())
+        thread1.start()
+        thread1.join()
     except:
         print()
-    thread1 = Thread(target=check_time_for_mailing_list())
-    thread1.start()
-    thread1.join()
+        thread1 = Thread(target=check_time_for_mailing_list())
+        thread1.start()
+        thread1.join()
 
 
 def check_time_for_mailing_list():
