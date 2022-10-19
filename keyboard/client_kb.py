@@ -1,5 +1,8 @@
 from aiogram.types import InlineKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 
+a1 = InlineKeyboardButton(text='1', callback_data='1')
+kb_inline = InlineKeyboardMarkup(row_width=2).add(a1)
+
 
 async def answer_start(kb_inline):
     a1 = InlineKeyboardButton(text='Информация ТЦБ', callback_data='kb_info_ufa')
