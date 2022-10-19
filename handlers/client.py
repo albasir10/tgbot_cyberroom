@@ -320,7 +320,7 @@ async def cansel_handler(callback: types.CallbackQuery, state: FSMContext):
     await command_start_if_back(callback.message.chat, state)
 
 
-def register_handlers_client(dp: Dispatcher):
+def register_handlers_client(dp: Dispatcher) -> object:
     dp.register_callback_query_handler(cansel_handler, text='отмена', state="*")
     dp.register_callback_query_handler(cansel_handler, Text(equals='отмена', ignore_case=True), state="*")
     dp.register_callback_query_handler(command_start, text='start', state=None)
