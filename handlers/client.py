@@ -9,12 +9,15 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from data_base import sqlite_db
 from generate_text import generate_qr_code
+from gizmo import connect_gizmo
 
 
 class FSMClient(StatesGroup):
     begin = State()
     info_ufa = State()
     info_dema = State()
+    menu_ufa = State()
+    menu_dema = State()
 
 
 # обычный старт который вызывается командой /start
@@ -286,13 +289,92 @@ async def command_choice_info_dema_contacts(callback: types.CallbackQuery, state
 """         КЛИЕНТЫ          """
 
 
+# меню клиентов тцб
+
+async def get_menu_for_client_ufa(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_choise_menu_ufa(answer_kb)
+        await bot.send_message(callback.from_user.id,
+                               'Выбирай:',
+                               reply_markup=answer_kb)
+        await FSMClient.menu_ufa.set()
+        await callback.answer('')
+    except:
+        await callback.answer('Ошибка')
+        print('Не получилось отправить сообщение get_menu_for_client')
+
+
+# статус компов
+
+async def get_status_pc_info(callback: types.CallbackQuery, state: FSMContext):
+    try:
+        current_state = await state.get_state()
+        if current_state == "FSMClient:menu_ufa":
+            status_pc_array = await connect_gizmo.get_all_status_pc("ufa")
+            status_pc_str = "Текущий статус компьютеров и ps:\n\n⚫ - недоступен\n🔴 - занят\n🟢 - свободен\n\n"
+            for i in range(25):
+                if i < 10:
+                    if status_pc_array[i] == 0:
+                        status_pc_str += "⚫   Premium " + str(i + 1) + "\n\n"
+                    elif status_pc_array[i] == 1:
+                        status_pc_str += "🔴   Premium " + str(i + 1) + "  время\n\n"
+                    else:
+                        status_pc_str += "🟢   Premium " + str(i + 1) + "\n\n"
+                elif i < 20 and i < 15:
+                    if status_pc_array[i] == 0:
+                        status_pc_str += "⚫   BootCamp " + str(i + 1) + "\n\n"
+                    elif status_pc_array[i] == 1:
+                        status_pc_str += "🔴   BootCamp " + str(i + 1) + "  время\n\n"
+                    else:
+                        status_pc_str += "🟢   BootCamp " + str(i + 1) + "\n\n"
+                elif i < 20:
+                    if status_pc_array[i] == 0:
+                        status_pc_str += "⚫   BootCamp " + str(i + 6) + "\n\n"
+                    elif status_pc_array[i] == 1:
+                        status_pc_str += "🔴   BootCamp " + str(i + 6) + "  время\n\n"
+                    else:
+                        status_pc_str += "🟢   BootCamp " + str(i + 6) + "\n\n"
+                elif i < 23:
+                    if status_pc_array[i] == 0:
+                        status_pc_str += "⚫   Luxe " + str(i + 25) + "\n\n"
+                    elif status_pc_array[i] == 1:
+                        status_pc_str += "🔴   Luxe " + str(i + 25) + "  время\n\n"
+                    else:
+                        status_pc_str += "🟢   Luxe " + str(i + 25) + "\n\n"
+                elif i < 24:
+                    if status_pc_array[i] == 0:
+                        status_pc_str += "⚫   Luxe " + str(i + 27) + "\n\n"
+                    elif status_pc_array[i] == 1:
+                        status_pc_str += "🔴   Luxe " + str(i + 27) + "  время\n\n"
+                    else:
+                        status_pc_str += "🟢   Luxe " + str(i + 27) + "\n\n"
+                else:
+                    if status_pc_array[i] == 0:
+                        status_pc_str += "⚫   PS4\n\n"
+                    elif status_pc_array[i] == 1:
+                        status_pc_str += "🔴   PS4    время\n\n"
+                    else:
+                        status_pc_str += "🟢   PS4\n\n"
+            status_pc_str += "\nТекущий статус компьютеров и ps:\n⚫ - недоступен\n🔴 - занят\n🟢 - свободен"
+            await bot.send_message(callback.from_user.id, status_pc_str)
+            await state.finish()
+            await callback.answer('')
+            await command_start_if_back(callback.message.chat, state)
+        else:
+            print()  # dema
+    except:
+        await callback.answer('Ошибка')
+        print('Не получилось отправить сообщение get_status_pc_info')
+
+
 # рассылка
 
 async def writing_clients(password: str):
     clients_for_mail = await sqlite_db.sql_get_all_users()
     qr_code_bytes = await generate_qr_code.create_qr_code(password)
     try:
-        text_for_clients = "Привет! Хотите получить 1 час бесплатно? Берите QR код!\nПодойдите к стойке администрации для активации. Код активируется, лишь, для первого показавшего."
+        text_for_clients = "📪 Привет! Хотите получить 1 час бесплатно? Берите QR код!\nПодойдите к стойке администрации для активации. Код активируется, лишь, для первого показавшего."
         for i in clients_for_mail:
             await bot.send_photo(i[0], photo=qr_code_bytes, caption=text_for_clients)
     except:
@@ -318,34 +400,37 @@ async def cansel_handler(callback: types.CallbackQuery, state: FSMContext):
 
 
 def register_handlers_client(dp: Dispatcher):
-    dp.register_callback_query_handler(cansel_handler, text='отмена', state="*")
+    dp.register_callback_query_handler(cansel_handler, text='cansel', state="*")
     dp.register_callback_query_handler(cansel_handler, Text(equals='отмена', ignore_case=True), state="*")
     dp.register_callback_query_handler(command_start_type_callback, text='start', state=None)
     # раздел инфы о уфе
-    dp.register_callback_query_handler(command_change_info_ufa, text='kb_info_ufa', state=FSMClient.begin)
-    dp.register_callback_query_handler(command_choice_info_ufa_pc, text='kb_info_ufa_pc', state=FSMClient.info_ufa)
+    dp.register_callback_query_handler(command_change_info_ufa, text='kb_info_ufa', state="*")
+    dp.register_callback_query_handler(command_choice_info_ufa_pc, text='kb_info_ufa_pc', state="*")
     dp.register_callback_query_handler(command_choice_info_ufa_stocks, text='kb_info_ufa_stocks',
-                                       state=FSMClient.info_ufa)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_ufa_prices, text='kb_info_ufa_prices',
-                                       state=FSMClient.info_ufa)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_ufa_prices_food, text='kb_info_ufa_prices_food',
-                                       state=FSMClient.info_ufa)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_ufa_games, text='kb_info_ufa_games',
-                                       state=FSMClient.info_ufa)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_ufa_contacts, text='kb_info_ufa_contacts',
-                                       state=FSMClient.info_ufa)
+                                       state="*")
+    # раздел меню для уфы
+    dp.register_callback_query_handler(get_menu_for_client_ufa, text='kb_menu_ufa', state="*")
+    dp.register_callback_query_handler(get_status_pc_info, text='kb_status_pc_now_ufa', state=FSMClient.menu_ufa)
     # раздел инфы о деме
-    dp.register_callback_query_handler(command_choice_info_dema, text='kb_info_dema', state=FSMClient.begin)
-    dp.register_callback_query_handler(command_choice_info_dema_pc, text='kb_info_dema_pc', state=FSMClient.info_dema)
+    dp.register_callback_query_handler(command_choice_info_dema, text='kb_info_dema', state="*")
+    dp.register_callback_query_handler(command_choice_info_dema_pc, text='kb_info_dema_pc', state="*")
     dp.register_callback_query_handler(command_choice_info_dema_stocks, text='kb_info_dema_stocks',
-                                       state=FSMClient.info_dema)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_dema_prices, text='kb_info_dema_prices',
-                                       state=FSMClient.info_dema)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_dema_prices_food, text='kb_info_dema_prices_food',
-                                       state=FSMClient.info_dema)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_dema_games, text='kb_info_dema_games',
-                                       state=FSMClient.info_dema)
+                                       state="*")
     dp.register_callback_query_handler(command_choice_info_dema_contacts, text='kb_info_dema_contacts',
-                                       state=FSMClient.info_dema)
+                                       state="*")
     # пустой ввод
     dp.register_message_handler(default_message_handler, commands=None, state=None)

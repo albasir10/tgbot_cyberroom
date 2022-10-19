@@ -74,7 +74,7 @@ async def update_time():
     time_save_file.close()
     generate_code_file = open("generate_text/code.txt", "w")
     chars = 'abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-    length = random.randint(6, 8)
+    length = random.randint(8, 10)
     password = ""
     for i in range(length):
         password += random.choice(chars)
