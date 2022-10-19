@@ -8,19 +8,19 @@ password = os.getenv('PASSWORD')
 
 
 async def connect_to_ufa():
-    response = requests.get("http://" + login + ":" + password + "@127.0.0.1:80/api")
+    response = requests.get("http://" + login + ":" + password + "@127.0.0.1:80/api/stats/session")
     if response.status_code == 200:
         print("Подключение к гизмо ТЦБ успешно")
     else:
-        print("Ошибка подключения к гизмо ТЦБ")
+        print("Ошибка подключения к гизмо ТЦБ: ", response.status_code)
 
 
 async def connect_to_dema():
-    response = requests.get("http://" + login + ":" + password + "@127.0.0.1:80/api")
+    response = requests.get("http://" + login + ":" + password + "@127.0.0.1:80/api/stats/session")
     if response.status_code == 200:
         print("Подключение к гизмо Дема успешно")
     else:
-        print("Ошибка подключения к гизмо Дема")
+        print("Ошибка подключения к гизмо Дема: ", response.status_code)
 
 
 async def get_all_status_pc(club_name: str):
