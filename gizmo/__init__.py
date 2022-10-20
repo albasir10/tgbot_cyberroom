@@ -1,1 +1,1 @@
-from gizmo import connect_gizmo
+from gizmo import connect_gizmo,parsing_text

@@ -308,64 +308,16 @@ async def get_menu_for_client_ufa(callback: types.CallbackQuery, state: FSMConte
 # статус компов
 
 async def get_status_pc_info(callback: types.CallbackQuery, state: FSMContext):
-    try:
         current_state = await state.get_state()
         if current_state == "FSMClient:menu_ufa":
-            status_pc_array = await connect_gizmo.get_all_status_pc("ufa")
-            status_pc_str = "Текущий статус компьютеров и ps:\n\n⚫ - недоступен\n🔴 - занят\n🟢 - свободен\n\n"
-            for i in range(25):
-                if i < 10:
-                    if status_pc_array[i] == 0:
-                        status_pc_str += "⚫   Premium " + str(i + 1) + "\n\n"
-                    elif status_pc_array[i] == 1:
-                        status_pc_str += "🔴   Premium " + str(i + 1) + "  время\n\n"
-                    else:
-                        status_pc_str += "🟢   Premium " + str(i + 1) + "\n\n"
-                elif i < 20 and i < 15:
-                    if status_pc_array[i] == 0:
-                        status_pc_str += "⚫   BootCamp " + str(i + 1) + "\n\n"
-                    elif status_pc_array[i] == 1:
-                        status_pc_str += "🔴   BootCamp " + str(i + 1) + "  время\n\n"
-                    else:
-                        status_pc_str += "🟢   BootCamp " + str(i + 1) + "\n\n"
-                elif i < 20:
-                    if status_pc_array[i] == 0:
-                        status_pc_str += "⚫   BootCamp " + str(i + 6) + "\n\n"
-                    elif status_pc_array[i] == 1:
-                        status_pc_str += "🔴   BootCamp " + str(i + 6) + "  время\n\n"
-                    else:
-                        status_pc_str += "🟢   BootCamp " + str(i + 6) + "\n\n"
-                elif i < 23:
-                    if status_pc_array[i] == 0:
-                        status_pc_str += "⚫   Luxe " + str(i + 25) + "\n\n"
-                    elif status_pc_array[i] == 1:
-                        status_pc_str += "🔴   Luxe " + str(i + 25) + "  время\n\n"
-                    else:
-                        status_pc_str += "🟢   Luxe " + str(i + 25) + "\n\n"
-                elif i < 24:
-                    if status_pc_array[i] == 0:
-                        status_pc_str += "⚫   Luxe " + str(i + 27) + "\n\n"
-                    elif status_pc_array[i] == 1:
-                        status_pc_str += "🔴   Luxe " + str(i + 27) + "  время\n\n"
-                    else:
-                        status_pc_str += "🟢   Luxe " + str(i + 27) + "\n\n"
-                else:
-                    if status_pc_array[i] == 0:
-                        status_pc_str += "⚫   PS4\n\n"
-                    elif status_pc_array[i] == 1:
-                        status_pc_str += "🔴   PS4    время\n\n"
-                    else:
-                        status_pc_str += "🟢   PS4\n\n"
-            status_pc_str += "\nТекущий статус компьютеров и ps:\n⚫ - недоступен\n🔴 - занят\n🟢 - свободен"
+            status_pc_str = await connect_gizmo.get_all_status_pc("ufa")
             await bot.send_message(callback.from_user.id, status_pc_str)
             await state.finish()
             await callback.answer('')
             await command_start_if_back(callback.message.chat, state)
         else:
             print()  # dema
-    except:
-        await callback.answer('Ошибка')
-        print('Не получилось отправить сообщение get_status_pc_info')
+
 
 
 # рассылка
