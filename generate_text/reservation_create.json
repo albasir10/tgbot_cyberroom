@@ -1,0 +1,20 @@
+{
+  "userId": 0,
+  "date": "2022-10-21T04:25:23.507Z",
+  "duration": 2147483647,
+  "contactPhone": "string",
+  "contactEmail": "user@example.com",
+  "note": "string",
+  "pin": "string",
+  "status": 0,
+  "hosts": [
+    {
+      "hostId": 0
+    }
+  ],
+  "users": [
+    {
+      "userId": 0
+    }
+  ]
+}
