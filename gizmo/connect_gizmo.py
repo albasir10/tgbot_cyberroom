@@ -6,10 +6,12 @@ import re
 
 login = os.getenv('LOGIN')
 password = os.getenv('PASSWORD')
+ip = os.getenv("IP")
+port = os.getenv("PORT")
 
 
 async def connect_to_ufa():
-    response = requests.get("http://" + login + ":" + password + "@127.0.0.1:80/api/usersessions/activeinfo")
+    response = requests.get("http://" + login + ":" + password + "@" + ip + ":" + port + "/api/usersessions/activeinfo")
     if response.status_code == 200:
 
         print("Подключение к гизмо ТЦБ успешно\n")
