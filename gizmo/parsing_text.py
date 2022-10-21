@@ -1,10 +1,11 @@
 import datetime
 import json
 import requests
+
 """          parsing_user_sessions_active_info      ПОКА НЕ РАБОТАЕТ   """
 
 
-async def parsing_user_sessions_active_info(login : str, password : str, ip_ufa : str, port :str):
+async def parsing_user_sessions_active_info(login: str, password: str, ip_ufa: str, port: str):
     response = requests.get(
         "http://" + login + ":" + password + "@" + ip_ufa + ":" + port + "/api/hostcomputers")
     # test
@@ -35,12 +36,10 @@ async def parsing_user_sessions_active_info(login : str, password : str, ip_ufa 
     while 13 * (i + 1) <= len(new_array):
         new_array_2.append([new_array[g + 13 * i] for g in range(13)])
         i += 1
-    response_test = requests.get("http://google.com")
+    response_test = None
     for g in new_array_2:
         if g[7][1] == 'false':
-            response_test = requests.get("http://" + login + ":" + password + "@" + ip_ufa + ":" + port + "/api/hostcomputers/"+g[1][2])
-            break
-    print(response_test.text)
+            print(g)
     """
     for g in new_array_2:
         if g[7][1] == 'false':
@@ -49,101 +48,6 @@ async def parsing_user_sessions_active_info(login : str, password : str, ip_ufa 
     """
     status_pc_str = 0
     # test
-    """
-    counts_pc = 0
-    with open("global_info/info_ufa.txt", "r") as f:
-        counts_pc = int(f.readline())
-    states_pc = []
-    for i in range(counts_pc):
-        states_pc.append([])
-        for j in range(2):
-            states_pc[i].append(0)
-    new_text = ""
-    i = 0
-
-    while i < len(text_for_number_pc):
-        new_i = text_for_number_pc.find('hostNumber', i, len(text_for_number_pc))
-        if new_i == -1:
-            break
-        new_i = text_for_number_pc.find('"', new_i, len(text_for_number_pc)) + 2
-        split_text = text_for_number_pc.find(',', new_i, len(text_for_number_pc))
-        current_pc = int(text_for_number_pc[new_i:split_text])
-        if current_pc < 21:
-            states_pc[current_pc - 1][0] = current_pc
-        elif 20 < current_pc < 26:
-            states_pc[current_pc - 6][0] = current_pc
-        elif current_pc < 51:
-            states_pc[current_pc - 26][0] = current_pc
-        else:
-            # плойка
-            states_pc[len(states_pc) - 1][0] = current_pc
-        i = new_i
-    i = 0
-    status_pc_str = ""  # удалить после проверок
-
-    status_pc_str = "Текущий статус компьютеров и ps:\n\n⚫ - недоступен\n🔴 - занят\n🟢 - свободен\n\n"
-    for i in range(25):  # пока не работает ⚫
-        if i < 10:
-            if states_pc[i][1] == -1:
-                status_pc_str += "⚫   Premium " + str(i + 1) + "\n\n"
-            elif states_pc[i][1] > 0:
-                time_minutes = int(states_pc[i][1] / 60)
-                time_hours = int(time_minutes / 24)
-                status_pc_str += "🔴   Premium " + str(i + 1) + "  время:  " + str(time_hours) + " ч " + str(
-                    time_minutes) + " м" + "\n\n"
-            elif states_pc[i][1] == 0:
-                status_pc_str += "🟢   Premium " + str(i + 1) + "\n\n"
-        elif i < 15:
-            if states_pc[i][1] == -1:
-                status_pc_str += "⚫   BootCamp " + str(i + 1) + "\n\n"
-            elif states_pc[i][1] > 0:
-                time_minutes = int(states_pc[i][1] / 60)
-                time_hours = int(time_minutes / 24)
-                status_pc_str += "🔴   BootCamp " + str(i + 1) + "  время:  " + str(time_hours) + " ч " + str(
-                    time_minutes) + " м" + "\n\n"
-            elif states_pc[i][1] == 0:
-                status_pc_str += "🟢   BootCamp " + str(i + 1) + "\n\n"
-        elif i < 20:
-            if states_pc[i][1] == -1:
-                status_pc_str += "⚫   BootCamp " + str(i + 6) + "\n\n"
-            elif states_pc[i][1] > 0:
-                time_minutes = int(states_pc[i][1] / 60)
-                time_hours = int(time_minutes / 24)
-                status_pc_str += "🔴   BootCamp " + str(i + 6) + "  время:  " + str(
-                    time_hours) + " ч " + str(time_minutes) + " м" + "\n\n"
-            elif states_pc[i][1] == 0:
-                status_pc_str += "🟢   BootCamp " + str(i + 6) + "\n\n"
-        elif i < 23:
-            if states_pc[i][1] == -1:
-                status_pc_str += "⚫   Luxe " + str(i + 26) + "\n\n"
-            elif states_pc[i][1] > 0:
-                time_minutes = int(states_pc[i][1] / 60)
-                time_hours = int(time_minutes / 24)
-                status_pc_str += "🔴   Luxe " + str(i + 26) + "  время:  " + str(
-                    time_hours) + " ч " + str(time_minutes) + " м" + "\n\n"
-            elif states_pc[i][1] == 0:
-                status_pc_str += "🟢   Luxe " + str(i + 26) + "\n\n"
-        elif i < 24:
-            if states_pc[i][1] == -1:
-                status_pc_str += "⚫   Luxe 50\n\n"
-            elif states_pc[i][1] > 0:
-                time_minutes = int(states_pc[i][1] / 60)
-                time_hours = int(time_minutes / 24)
-                status_pc_str += "🔴   Luxe 50" + "  время:  " + str(
-                    time_hours) + " ч " + str(time_minutes) + " м" + "\n\n"
-            elif states_pc[i][1] == 0:
-                status_pc_str += "🟢   Luxe 50\n\n"
-        else:
-            if states_pc[i][1] == -1:
-                status_pc_str += "⚫   PS4\n\n"
-            elif states_pc[i][1] > 0:
-                time_minutes = int(states_pc[i][1] / 60)
-                time_hours = int(time_minutes / 24)
-                status_pc_str += "🔴   PS4  время:  " + str(time_hours) + " ч " + str(time_minutes) + " м" + "\n\n"
-            elif states_pc[i][1] == 0:
-                status_pc_str += "🟢   PS4\n\n"
-    status_pc_str += "\nТекущий статус компьютеров и ps:\n⚫ - недоступен\n🔴 - занят\n🟢 - свободен"
-    """
     return status_pc_str
 
 
@@ -164,4 +68,7 @@ async def parsing_reservations_for_pc(date: str, contact_phone: str, note: str, 
     print()
 
 
-
+date_text = str(datetime.datetime.now())
+date_text = date_text.replace(' ', 'T')
+date_text += "Z"
+print(date_text)

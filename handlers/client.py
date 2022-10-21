@@ -18,6 +18,12 @@ class FSMClient(StatesGroup):
     info_dema = State()
     menu_ufa = State()
     menu_dema = State()
+    reservation_begin_ufa = State()
+    reservation_choise_pc_ufa = State()
+    reservation_choise_data_ufa = State()
+    reservation_write_number_ufa = State()
+    reservation_write_note_ufa = State()
+    reservation_write_duration_ufa = State()
 
 
 # обычный старт который вызывается командой /start
@@ -308,16 +314,112 @@ async def get_menu_for_client_ufa(callback: types.CallbackQuery, state: FSMConte
 # статус компов
 
 async def get_status_pc_info(callback: types.CallbackQuery, state: FSMContext):
-        current_state = await state.get_state()
-        if current_state == "FSMClient:menu_ufa":
-            status_pc_str = await connect_gizmo.get_all_status_pc("ufa")
-            await bot.send_message(callback.from_user.id, status_pc_str)
-            await state.finish()
-            await callback.answer('')
-            await command_start_if_back(callback.message.chat, state)
-        else:
-            print()  # dema
+    current_state = await state.get_state()
+    if current_state == "FSMClient:menu_ufa":
+        status_pc_str = await connect_gizmo.get_all_status_pc("ufa")
+        await bot.send_message(callback.from_user.id, status_pc_str)
+        await state.finish()
+        await callback.answer('')
+        await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
 
+
+# Забронировать
+
+async def create_reservation_pc(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == "FSMClient:menu_ufa":
+        await FSMClient.reservation_begin_ufa.set()
+        # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_choise_pc_for_reservation_ufa(answer_kb)
+        await bot.send_message(callback.from_user.id, "Какой пк хотите забронировать?", reply_markup=answer_kb)
+        # await state.finish()
+        await callback.answer('')
+        # await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
+
+
+async def reservation_pc_choise_pc(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == "FSMClient:reservation_begin_ufa":
+        await FSMClient.reservation_choise_pc_ufa.set()
+        # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_cansel(answer_kb)
+        await bot.send_message(callback.from_user.id, "Напишите дату, пример: 2022-10-23T04:25:23.507Z",
+                               reply_markup=answer_kb)
+        # await state.finish()
+        await callback.answer('')
+        # await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
+
+
+async def reservation_pc_choise_data(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == "FSMClient:reservation_choise_pc_ufa":
+        await FSMClient.reservation_choise_data_ufa.set()
+        # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_cansel(answer_kb)
+        await bot.send_message(callback.from_user.id, "Напишите свой номер:",
+                               reply_markup=answer_kb)
+        # await state.finish()
+        await callback.answer('')
+        # await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
+
+
+async def reservation_pc_write_number(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == "FSMClient:reservation_write_number_ufa":
+        await FSMClient.reservation_choise_data_ufa.set()
+        # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_cansel(answer_kb)
+        await bot.send_message(callback.from_user.id, "Напишите свой номер:",
+                               reply_markup=answer_kb)
+        # await state.finish()
+        await callback.answer('')
+        # await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
+
+
+async def reservation_pc_write_note(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == "FSMClient:reservation_write_number_ufa":
+        await FSMClient.reservation_choise_data_ufa.set()
+        # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_cansel(answer_kb)
+        await bot.send_message(callback.from_user.id, "Напишите свой номер:",
+                               reply_markup=answer_kb)
+        # await state.finish()
+        await callback.answer('')
+        # await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
+
+
+async def reservation_pc_write_duration(callback: types.CallbackQuery, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state == "FSMClient:reservation_write_number_ufa":
+        await FSMClient.reservation_choise_data_ufa.set()
+        # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_cansel(answer_kb)
+        await bot.send_message(callback.from_user.id, "Напишите свой номер:",
+                               reply_markup=answer_kb)
+        # await state.finish()
+        await callback.answer('')
+        # await command_start_if_back(callback.message.chat, state)
+    else:
+        print()  # dema
 
 
 # рассылка
@@ -370,7 +472,10 @@ def register_handlers_client(dp: Dispatcher):
                                        state="*")
     # раздел меню для уфы
     dp.register_callback_query_handler(get_menu_for_client_ufa, text='kb_menu_ufa', state="*")
+    # раздел статус пк для Уфы
     dp.register_callback_query_handler(get_status_pc_info, text='kb_status_pc_now_ufa', state=FSMClient.menu_ufa)
+    # раздел брони для Уфы
+    dp.register_callback_query_handler(create_reservation_pc, text='kb_reservation_pc_ufa', state=FSMClient.menu_ufa)
     # раздел инфы о деме
     dp.register_callback_query_handler(command_choice_info_dema, text='kb_info_dema', state="*")
     dp.register_callback_query_handler(command_choice_info_dema_pc, text='kb_info_dema_pc', state="*")
