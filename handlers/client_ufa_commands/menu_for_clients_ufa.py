@@ -91,12 +91,12 @@ async def reservation_pc_choise_data(callback: types.CallbackQuery, state: FSMCo
 
 async def reservation_pc_write_number(callback: types.CallbackQuery, state: FSMContext):
     current_state = await state.get_state()
-    if current_state == "FSMClient:reservation_write_number_ufa":
-        await client.FSMClient.reservation_choise_data_ufa.set()
+    if current_state == "FSMClient:reservation_choise_data_ufa":
+        await client.FSMClient.reservation_write_number_ufa.set()
         # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
         answer_kb = InlineKeyboardMarkup()
         answer_kb = await client_kb.answer_cansel(answer_kb)
-        await bot.send_message(callback.from_user.id, "Напишите свой номер:",
+        await bot.send_message(callback.from_user.id, "Здесь можете вписать комментарий к бронированию, если комментарий не нужен, отправьте любое сообщение:",
                                reply_markup=answer_kb)
         # await state.finish()
         await callback.answer('')
