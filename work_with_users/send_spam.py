@@ -4,6 +4,7 @@ from datetime import datetime
 import random
 from handlers import client
 from threading import Thread
+from handlers.general_commands import mailing_commands
 
 
 async def first_check_after_begin_work_bot():
@@ -81,4 +82,4 @@ async def update_time():
     print("НОВЫЙ ПРОМОКОД: ", password)
     generate_code_file.writelines(password)
     generate_code_file.close()
-    await client.writing_clients(password)
+    await mailing_commands.writing_clients(password)

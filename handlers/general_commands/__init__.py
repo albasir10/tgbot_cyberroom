@@ -1,2 +1,3 @@
 from handlers.general_commands import start_commands
 from handlers.general_commands import cansel_commands
+from handlers.general_commands import mailing_commands
