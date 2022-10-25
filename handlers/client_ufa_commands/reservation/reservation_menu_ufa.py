@@ -28,7 +28,6 @@ async def reservation_pc_choise_data(message: types.Message, state: FSMContext):
     if current_state == "FSMClient:reservation_choise_pc_ufa":
         await client.FSMClient.reservation_choise_data_ufa.set()
         date_pc = message.text
-        print(date_pc)
         with open("clients_data/create_reservation_data/" + str(message.from_user.id) + ".txt", 'a') as f:
             f.write("date="+date_pc+"\n")
         await bot.send_message(message.from_user.id, "Напишите свой номер:")
@@ -68,8 +67,11 @@ async def reservation_pc_write_duration(message: types.Message, state: FSMContex
         with open("clients_data/create_reservation_data/" + str(message.from_user.id) + ".txt", 'a') as f:
             f.write("duration="+duration_client+"\n")
         # status_pc_str = await connect_gizmo.create_reservation_pc("ufa")
-        await bot.send_message(message.from_user.id, "Забронен")
+        answer_kb = InlineKeyboardMarkup()
+        answer_kb = await client_kb.answer_pay_reservation_begin(answer_kb)
+        await bot.send_message(message.from_user.id, "Хорошо, мы получили информацию, теперь нужно внести предоплату", reply_markup=answer_kb)
         # await state.finish()
+        #await message.answer('')
         # await command_start_if_back(callback.message.chat, state)
     else:
         print()  # dema

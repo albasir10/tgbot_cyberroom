@@ -1,0 +1,1 @@
+from pay.pay_reservation import pay_for_reservation

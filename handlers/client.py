@@ -6,6 +6,7 @@ from handlers.client_ufa_commands import menu_and_info_ufa, menu_for_clients_ufa
 from handlers.general_commands import start_commands, cansel_commands
 from handlers.client_dema_commands import menu_and_info_dema
 from handlers.client_ufa_commands.reservation import reservation_menu_ufa
+from pay.pay_reservation import pay_for_reservation
 
 
 class FSMClient(StatesGroup):
@@ -20,9 +21,11 @@ class FSMClient(StatesGroup):
     reservation_write_number_ufa = State()
     reservation_write_note_ufa = State()
     reservation_write_duration_ufa = State()
+    reservation_begin_pay_ufa = State()
 
 
 def register_handlers_client(dp: Dispatcher):
+
     dp.register_callback_query_handler(cansel_commands.cansel_handler, text='cansel', state="*")
 
     dp.register_callback_query_handler(cansel_commands.cansel_handler, Text(equals='отмена', ignore_case=True),
@@ -67,7 +70,6 @@ def register_handlers_client(dp: Dispatcher):
                                        state=FSMClient.menu_ufa)
 
     reservation_menu_ufa.register_handlers_client(dp)
-
     dp.register_message_handler(reservation_menu_ufa.reservation_pc_choise_data,
                                 commands=None,
                                 state=FSMClient.reservation_choise_pc_ufa)
@@ -83,6 +85,9 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(reservation_menu_ufa.reservation_pc_write_duration,
                                 commands=None,
                                 state=FSMClient.reservation_write_note_ufa)
+
+    pay_for_reservation.register_handlers_client(dp)
+
     # раздел инфы о деме
 
     dp.register_callback_query_handler(menu_and_info_dema.command_choice_info_dema, text='kb_info_dema', state="*")

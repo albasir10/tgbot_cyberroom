@@ -59,6 +59,12 @@ async def answer_choise_pc_for_reservation_ufa(kb_inline):
     return kb_inline
 
 
+async def answer_pay_reservation_begin(kb_inline):
+    pc1 = InlineKeyboardButton(text='Оплатить', callback_data='kb_pay_reservation')
+    back = InlineKeyboardButton(text='🔙 отмена', callback_data='cansel')
+    kb_inline = InlineKeyboardMarkup().add(pc1).add(back)
+    return kb_inline
+
 async def answer_change_info_ufa(kb_inline):
     a1 = InlineKeyboardButton(text='ℹ информация о пк', callback_data='kb_info_ufa_pc')
     a2 = InlineKeyboardButton(text='🎉 акции', callback_data='kb_info_ufa_stocks')
