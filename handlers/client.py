@@ -7,6 +7,7 @@ from handlers.general_commands import start_commands, cansel_commands
 from handlers.client_dema_commands import menu_and_info_dema
 from handlers.client_ufa_commands.reservation import reservation_menu_ufa
 from pay.pay_reservation import pay_for_reservation
+from aiogram.types import ContentTypes
 
 
 class FSMClient(StatesGroup):
@@ -25,7 +26,6 @@ class FSMClient(StatesGroup):
 
 
 def register_handlers_client(dp: Dispatcher):
-
     dp.register_callback_query_handler(cansel_commands.cansel_handler, text='cansel', state="*")
 
     dp.register_callback_query_handler(cansel_commands.cansel_handler, Text(equals='отмена', ignore_case=True),
@@ -86,7 +86,16 @@ def register_handlers_client(dp: Dispatcher):
                                 commands=None,
                                 state=FSMClient.reservation_write_note_ufa)
 
-    pay_for_reservation.register_handlers_client(dp)
+    dp.register_callback_query_handler(pay_for_reservation.reservation_pc_give_pay,
+                                       text='kb_pay_reservation', state=FSMClient.reservation_write_duration_ufa)
+
+    dp.register_pre_checkout_query_handler(pay_for_reservation.process_pre_checkout_query,
+                                           lambda query: True,
+                                           state=FSMClient.reservation_begin_pay_ufa)
+
+    dp.register_message_handler(pay_for_reservation.process_successful_payment,
+                                content_types=ContentTypes.SUCCESSFUL_PAYMENT,
+                                state=FSMClient.reservation_begin_pay_ufa)
 
     # раздел инфы о деме
 

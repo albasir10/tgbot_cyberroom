@@ -1,5 +1,7 @@
 # -*- coding:utf -8 -*-
 import asyncio
+
+from aiogram import types
 from aiogram.utils import executor
 from create_bot import dp
 from handlers import client, admin, other
