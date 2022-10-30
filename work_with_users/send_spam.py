@@ -1,3 +1,4 @@
+import asyncio
 import threading
 import time
 from datetime import datetime
@@ -15,18 +16,13 @@ async def first_check_after_begin_work_bot():
         time_save_file.writelines([last_time + "\n", str(current_datetime.weekday())])
         time_save_file.close()
         await update_time()
-        thread1 = Thread(target=check_time_for_mailing_list())
-        thread1.start()
-        thread1.join()
+        await check_time_for_mailing_list()
     except:
+        await check_time_for_mailing_list()
         print()
-        thread1 = Thread(target=check_time_for_mailing_list())
-        thread1.start()
-        thread1.join()
 
 
-def check_time_for_mailing_list():
-    timer_for_wait = threading.Timer(86400.0, check_time_for_mailing_list)
+async def check_time_for_mailing_list():
     current_datetime = datetime.now()
     last_time_text = ""
     last_weekday = ""
@@ -51,20 +47,20 @@ def check_time_for_mailing_list():
             day_last_time = last_time_text[pointr1 + 1:len(last_time_text):1]
             day_current_time = current_time_text[pointr2 + 1:len(current_time_text):1]
             if int(day_current_time) == int(day_last_time):
-                timer_for_wait.start()
+                pass
             elif abs(int(day_current_time) - int(day_last_time) >= 7):
-                update_time()
+                await update_time()
             else:
-                timer_for_wait.start()
+                pass
         elif int(month_last_time) - int(month_current_time) == 1 and int(last_weekday) == int(
                 current_datetime.weekday()):
-            update_time()
+            await update_time()
         elif int(month_last_time) - int(month_current_time) == 1:
-            timer_for_wait.start()
+            pass
         else:
-            update_time()
+            await update_time()
     else:
-        update_time()
+        await update_time()
 
 
 async def update_time():
