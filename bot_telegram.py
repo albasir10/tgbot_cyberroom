@@ -1,10 +1,8 @@
 # -*- coding:utf -8 -*-
 import asyncio
-
-from aiogram import types
 from aiogram.utils import executor
 from create_bot import dp
-from handlers import client, admin, other
+from handlers import client
 from data_base import sqlite_db
 from work_with_users import send_spam
 from gizmo import connect_gizmo

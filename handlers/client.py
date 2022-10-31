@@ -1,6 +1,5 @@
-from aiogram import types, Dispatcher
+from aiogram import Dispatcher
 from aiogram.dispatcher.filters import Text
-from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from handlers.client_ufa_commands import menu_and_info_ufa, menu_for_clients_ufa
 from handlers.general_commands import start_commands, cansel_commands
