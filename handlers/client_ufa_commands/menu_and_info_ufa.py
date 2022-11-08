@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup,  InputFile
+from aiogram.types import InlineKeyboardMarkup, InputFile
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from keyboard import client_kb
@@ -17,41 +17,39 @@ async def command_change_info_ufa(callback: types.CallbackQuery, state: FSMConte
                                'Выбирай:', reply_markup=answer_kb)
         await callback.answer('')
     except:
-        await callback.answer('Ошибка')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa')
 
 
 # инфа о пк в уфа
 async def command_choice_info_ufa_pc(callback: types.CallbackQuery, state: FSMContext):
     try:
-        k = ""
+        info_pc_string = ""
         with open('texts/info_pc_Ufa.txt', encoding='utf-8') as file:
             for item in file:
-                k += item
-        await bot.send_message(callback.from_user.id, k)
-        file.close()
+                info_pc_string += item
+        await bot.send_message(callback.from_user.id, info_pc_string)
         await state.finish()
         await callback.answer('')
         await start_commands.command_start_if_back(callback.message.chat, state)
     except:
-        await callback.answer('Общение через лс')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa_pc ')
 
 
 # акции в уфа
 async def command_choice_info_ufa_stocks(callback: types.CallbackQuery, state: FSMContext):
     try:
-        k = ""
+        stocks_string = ""
         with open('texts/stocks_Ufa.txt', encoding='utf-8') as file:
             for item in file:
-                k += item
-        await bot.send_message(callback.from_user.id, k)
-        file.close()
+                stocks_string += item
+        await bot.send_message(callback.from_user.id, stocks_string)
         await state.finish()
         await callback.answer('')
         await start_commands.command_start_if_back(callback.message.chat, state)
     except:
-        await callback.answer('Общение через лс')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa_stocks')
 
 
@@ -64,7 +62,7 @@ async def command_choice_info_ufa_prices(callback: types.CallbackQuery, state: F
         await callback.answer('')
         await start_commands.command_start_if_back(callback.message.chat, state)
     except:
-        await callback.answer('Общение через лс')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa_prices')
 
 
@@ -77,7 +75,7 @@ async def command_choice_info_ufa_prices_food(callback: types.CallbackQuery, sta
         await callback.answer('')
         await start_commands.command_start_if_back(callback.message.chat, state)
     except:
-        await callback.answer('Общение через лс')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa_prices_food')
 
 
@@ -90,22 +88,21 @@ async def command_choice_info_ufa_games(callback: types.CallbackQuery, state: FS
         await callback.answer('')
         await start_commands.command_start_if_back(callback.message.chat, state)
     except:
-        await callback.answer('Общение через лс')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa_games')
 
 
 # контактная информация в уфа
 async def command_choice_info_ufa_contacts(callback: types.CallbackQuery, state: FSMContext):
     try:
-        k = ""
+        contacts_string = ""
         with open('texts/contacts_Ufa.txt', encoding='utf-8') as file:
             for item in file:
-                k += item
-        await bot.send_message(callback.from_user.id, k)
-        file.close()
+                contacts_string += item
+        await bot.send_message(callback.from_user.id, contacts_string)
         await state.finish()
         await callback.answer('')
         await start_commands.command_start_if_back(callback.message.chat, state)
     except:
-        await callback.answer('Общение через лс')
+        await callback.answer('Ошибка сервера')
         print('Не получилось отправить сообщение command_change_info_ufa_contacts')

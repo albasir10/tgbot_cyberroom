@@ -1,8 +1,10 @@
 import sqlite3 as sq
 
+base = sq.connect('cyber_room_ufa.db')
+
 
 def sql_start():
-    global base, cur
+    global base
     base = sq.connect('cyber_room_ufa.db')
     cur = base.cursor()
     if base:
@@ -12,7 +14,9 @@ def sql_start():
 
 
 async def sql_get_info(id: int):
+    global base
     search_text = "SELECT * FROM clients WHERE id LIKE '%" + str(id) + "%'"
+    cur = base.cursor()
     cur.execute(search_text)
     records = cur.fetchall()
     if len(records) == 0:
@@ -22,7 +26,9 @@ async def sql_get_info(id: int):
 
 
 async def sql_get_all_users():
+    global base
     search_text = "SELECT * FROM clients"
+    cur = base.cursor()
     cur.execute(search_text)
     records = cur.fetchall()
     if len(records) == 0:
@@ -33,6 +39,8 @@ async def sql_get_all_users():
 
 async def sql_add_client(id: int, name: str):
     try:
+        global base
+        cur = base.cursor()
         cur.execute("INSERT INTO clients (id, name) VALUES(?,?)", (id, name))
         base.commit()
         print(str(id) + " зарегистрировался")
