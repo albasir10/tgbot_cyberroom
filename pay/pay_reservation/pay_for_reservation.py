@@ -4,7 +4,7 @@ from create_bot import bot
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from handlers import client
-
+from gizmo import connect_gizmo
 token_pay = os.getenv('TOKENPAY')
 PRICE = types.LabeledPrice(label='чек', amount=10000)
 
@@ -31,6 +31,8 @@ async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery,
 async def process_successful_payment(message: types.Message, state: FSMContext):
     await state.finish()
     pmnt = message.successful_payment.to_python()
-    await bot.send_message(
-        message.chat.id, "вы забронировали пк"
-    )
+    if await connect_gizmo.create_reservation_pc(message.from_user.id):
+        await bot.send_message(message.chat.id, "вы забронировали пк")
+    else:
+        print("error")
+        await bot.send_message(message.chat.id, "Ошибка")
